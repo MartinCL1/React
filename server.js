@@ -1,9 +1,15 @@
 const express = require('express')
+const cookieParser = require('cookie-parser')
+const cors = require('cors')
 const login = require('./Routes/autenticacion/login')
 const app = express()
-
 const PORT = 3500 || process.env.PORT
 
+app.use(cookieParser())
+app.use(cors({origin: 'http://localhost:5173', credentials: true}))
+app.use(express.json())
+
+// Rutas
 app.use('/login', login );
 
 app.listen(PORT, ()=> {
