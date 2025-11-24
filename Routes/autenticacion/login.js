@@ -4,6 +4,7 @@ const { validarHash, verificacionSesion, crearTokens } = require("../global");
 const login = express.Router();
 
 login.post("/", async (request, response) => {
+  console.log('entra aca')
   const { nombreUsuario, contrasena } = request.body;
   const [usuarioEncontrado] = await buscarUsuario(nombreUsuario);
 
@@ -45,6 +46,10 @@ login.post("/", async (request, response) => {
   }
 });
 
-login.get("/", verificacionSesion, (request, response) => {});
+login.get("/", verificacionSesion, (request, response) => {
+  const usuario = request.usuario
+  if(!usuario) return response.status(403).json({acceso: false})
+  response.status(200).json({acceso: true})
+});
 
 module.exports = login;
