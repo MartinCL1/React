@@ -1,21 +1,21 @@
 const express = require('express')
 const { verificacionSesion } = require('../global')
+const {obtenerProductos, eliminarRegistros, agregarProducto} = require('../../db_conexion')
 const principal = express.Router()
-const {obtenerProductos, eliminarRegistros} = require('../../db_conexion')
 
 principal.use(verificacionSesion);
 
 principal.get('/', verificacionSesion, async (request, response) => {
     const usuario = request.usuario;
-    if (!usuario) return response.status(403).json({ acceso: false });  // Si no hay usuario, no hay acceso ni data.
+    if (!usuario) return response.status(403).json({ acceso: false });
 
-    const productos = await obtenerProductos();  // Obtenemos los productos.
+    const productos = await obtenerProductos();  
     return response.status(200).json({ acceso: true, informacion: productos })
 })
 
 principal.delete('/', verificacionSesion, async (request, response) => {
     const usuario = request.usuario;
-    if (!usuario) return response.status(403).json({ acceso: false });  // Si no hay usuario, no hay acceso ni data.
+    if (!usuario) return response.status(403).json({ acceso: false });  
 
     const { id } = request.body;
     if (!id || id.length > 10) return response.status(400).json({ acceso: false });
@@ -24,6 +24,20 @@ principal.delete('/', verificacionSesion, async (request, response) => {
     if (!producto) return response.status(404).json({ acceso: false });
     response.status(200).json({ acceso: true, informacion: producto })
 })
+
+
+principal.post('/agregarProducto', verificacionSesion, async (request, response) => {
+    const usuario = request.usuario;
+    if (!usuario) return response.status(403).json({ acceso: false });
+
+    const { id, nombre, precio_unidad, existente, actual, vendido } = request.body;
+    if (!id || !nombre || !precio_unidad || !existente || !actual || !vendido) return response.status(400).json({ acceso: false });
+    
+    const producto = await agregarProducto({id, nombre, precio_unidad, existente, actual, vendido});
+    if (!producto) return response.status(404).json({ acceso: false });
+    response.status(200).json({ acceso: true, informacion: producto })
+})
+
 module.exports = {
     principal
 }

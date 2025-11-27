@@ -33,8 +33,21 @@ const eliminarRegistros = async (ids) => {
     }
 }
 
+const agregarProducto = async(producto) => {
+    try {
+        const { data } = await cliente.from('Producto').insert(producto).select()
+        if(!data) {
+            return false
+        }
+        return data
+    }catch {
+        return false
+    }
+}
+
 module.exports = {
     buscarUsuario,
     obtenerProductos,
-    eliminarRegistros
+    eliminarRegistros,
+    agregarProducto
 }
