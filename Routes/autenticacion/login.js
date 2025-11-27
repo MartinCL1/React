@@ -45,6 +45,10 @@ login.post("/", async (request, response) => {
   }
 });
 
-login.get("/", verificacionSesion, (request, response) => {});
+login.get("/", verificacionSesion, (request, response) => {
+  const usuario = request.usuario
+  if(!usuario) return response.status(403).json({acceso: false})
+  response.status(200).json({acceso: true})
+});
 
 module.exports = login;

@@ -1,83 +1,102 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+require('dotenv/config')
 
 const validarHash = async (contrasena, hashExistente) => {
   const hash = await bcrypt.compare(contrasena, hashExistente);
   return hash;
 };
 
-const verificacionSesion = (request, response) => {
+const SECRET_KEY_JWT = process.env.SECRET_KEY_JWT;
+
+const verificacionSesion = (request, response, next) => {
   const accessToken = request.cookies.access_token;
-  const refreshToken = request.cookies.refreshToken;
-  let refrescar = false
 
   if (!accessToken) {
-    refrescar = refrescarToken(refreshToken)
+    refrescarToken(request, response);
+    return next()
   }
 
-  if(!refrescar) return response.status(403).json({acceso: false}); // ya sea hubo error o no existe refresh token
-  // la unica opcion es refrescarlo si no hay error.
-  if (refrescar && !accessToken) {
-    const usuario = {id: refrescar.id, nombre_usuario: refrescar.nombre_usuario}
-    response.usuario = usuario;
-    response.cookie('access_token')
-  }
-
-  
+  // se envia cuando hay access token aunque recordemos que podemos eliminar lo del response y solo usar return por lo de la validacion en la ruta
   try {
-    const decodeToken = jwt.verify(accessToken, "MI LLAVE SUPER SECRETAAAA");
+    const decodeToken = jwt.verify(accessToken, SECRET_KEY_JWT);
     if (!decodeToken) return response.status(401).json({ acceso: false });
-    response.usuario = {
+    request.usuario = {
       id: decodeToken.id,
-      nombreUsuario: decodeToken.nombreUsuario,
+      nombre_usuario: decodeToken.nombre_usuario,
     };
-    return response.status(200).json({ acceso: true });
+    next()
   } catch {
     return response.status(403).json({ acceso: false });
   }
 };
 
-const refrescarToken = (refreshToken) => {
-  let refrescar = false
-  if(!refreshToken) return false
+const refrescarToken = (request, response) => {
+  const tokenRefrescado = request.cookies.refresh_token;
+  if (!tokenRefrescado) return false 
 
   try {
-    refrescar = jwt.verify(refreshToken, 'MI LLAVE SUPER SECRETAAAA'); // si no hay error, se devuelve el token para que se guarde.
-    return refrescar
-  } catch {
-    refrescar = false
-    return refrescar
-  }  
-
-}
-
-const crearTokens = (informacionUsuario) => {
-  let refreshToken = undefined
-  let accessToken = undefined
-  
-  try {
-    accessToken = jwt.sign(
-      informacionUsuario,
-      "MI LLAVE SUPER SECRETAAAA",
-      { expiresIn: "1h" }
+    const coincideToken = jwt.verify(
+      tokenRefrescado,
+      SECRET_KEY_JWT
     );
+    if (!coincideToken) return false
+    // Si coincide, generamos un nuevo Token de refresco
+    const usuario = {
+      id: coincideToken.id,
+      nombre_usuario: coincideToken.nombre_usuario,
+    };
 
-    refreshToken = jwt.sign(
-      informacionUsuario,
-      "MI LLAVE SUPER SECRETAAAA",
-      { expiresIn: "7d" }
-    );
+    const { accessToken, refreshToken } = crearTokens(usuario);
 
-    return { accessToken, refreshToken }
+    if (!accessToken && !refreshToken) return false
+    // almacenamos los tokens si todo esta bien
+    response
+      .cookie("access_token", accessToken, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env === "production",
+        maxAge: 3600000,
+      })
+      .cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+        secure: process.env === "production",
+        sameSite: "lax",
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+      });
+
+      request.usuario = usuario
+      return true
   } catch {
-    refreshToken = false
-    accessToken = false
-    return { accessToken, refreshToken }
+    return false
   }
 };
+
+const crearTokens = (informacionUsuario) => {
+  let refreshToken = undefined;
+  let accessToken = undefined;
+
+  try {
+    accessToken = jwt.sign(informacionUsuario, SECRET_KEY_JWT, {
+      expiresIn: "1h",
+    });
+
+    refreshToken = jwt.sign(informacionUsuario, SECRET_KEY_JWT, {
+      expiresIn: "7d",
+    });
+
+    return { accessToken, refreshToken };
+  } catch {
+    refreshToken = false;
+    accessToken = false;
+    return { accessToken, refreshToken };
+  }
+};
+
+
 
 module.exports = {
   validarHash,
   verificacionSesion,
-  crearTokens
+  crearTokens,
 };
