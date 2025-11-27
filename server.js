@@ -4,10 +4,10 @@ const cors = require('cors')
 const login = require('./Routes/autenticacion/login')
 const { principal } = require('./Routes/principal/principal')
 const app = express()
-const PORT = 3500 || process.env.PORT
+const PORT = 3500
 
 app.use(cookieParser())
-app.use(cors({credentials: true}))
+app.use(cors({credentials: true, origin: ['http://localhost:5173', 'https://panaben.netlify.app']}))
 app.use(express.json())
 
 // Rutas
@@ -16,6 +16,4 @@ app.use('/principal', principal);
 
 app.listen(PORT, ()=> {
     console.log('El server esta corriendo en el puerto: ', PORT)
-    console.log('-------------------------------------------------------------------------------------------')                  
-    console.log('-------------------------------------------------------------------------------------------')
 })
