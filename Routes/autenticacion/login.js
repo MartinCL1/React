@@ -4,7 +4,6 @@ const { validarHash, verificacionSesion, crearTokens } = require("../global");
 const login = express.Router();
 
 login.post("/", async (request, response) => {
-  console.log('entra aca')
   const { nombreUsuario, contrasena } = request.body;
   const [usuarioEncontrado] = await buscarUsuario(nombreUsuario);
 
