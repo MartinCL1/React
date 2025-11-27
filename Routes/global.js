@@ -1,10 +1,13 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+require('dotenv/config')
 
 const validarHash = async (contrasena, hashExistente) => {
   const hash = await bcrypt.compare(contrasena, hashExistente);
   return hash;
 };
+
+const SECRET_KEY_JWT = process.env.SECRET_KEY_JWT;
 
 const verificacionSesion = (request, response, next) => {
   const accessToken = request.cookies.access_token;
@@ -16,7 +19,7 @@ const verificacionSesion = (request, response, next) => {
 
   // se envia cuando hay access token aunque recordemos que podemos eliminar lo del response y solo usar return por lo de la validacion en la ruta
   try {
-    const decodeToken = jwt.verify(accessToken, "MI LLAVE SUPER SECRETAAAA");
+    const decodeToken = jwt.verify(accessToken, SECRET_KEY_JWT);
     if (!decodeToken) return response.status(401).json({ acceso: false });
     request.usuario = {
       id: decodeToken.id,
@@ -35,7 +38,7 @@ const refrescarToken = (request, response) => {
   try {
     const coincideToken = jwt.verify(
       tokenRefrescado,
-      "MI LLAVE SUPER SECRETAAAA"
+      SECRET_KEY_JWT
     );
     if (!coincideToken) return false
     // Si coincide, generamos un nuevo Token de refresco
@@ -74,11 +77,11 @@ const crearTokens = (informacionUsuario) => {
   let accessToken = undefined;
 
   try {
-    accessToken = jwt.sign(informacionUsuario, "MI LLAVE SUPER SECRETAAAA", {
+    accessToken = jwt.sign(informacionUsuario, SECRET_KEY_JWT, {
       expiresIn: "1h",
     });
 
-    refreshToken = jwt.sign(informacionUsuario, "MI LLAVE SUPER SECRETAAAA", {
+    refreshToken = jwt.sign(informacionUsuario, SECRET_KEY_JWT, {
       expiresIn: "7d",
     });
 
