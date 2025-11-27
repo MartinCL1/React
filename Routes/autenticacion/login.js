@@ -6,7 +6,7 @@ const login = express.Router();
 login.post("/", async (request, response) => {
   const { nombreUsuario, contrasena } = request.body;
   const [usuarioEncontrado] = await buscarUsuario(nombreUsuario);
-
+   
   if (!usuarioEncontrado) return response.status(403).json({ acceso: false });
   const esHashValido = await validarHash(
     contrasena,
@@ -28,12 +28,12 @@ login.post("/", async (request, response) => {
     response
       .cookie("access_token", accessToken, {
         httpOnly: true,
-        secure: process.env === "production",
+        secure: true,
         sameSite: "none",
         maxAge: 3600000,
       }).cookie("refresh_token", refreshToken, {
         httpOnly: true,
-        secure: process.env === "production",
+        secure: true,
         sameSite: "none",
         maxAge: 1000 * 60 * 60 * 24 * 7,
       });
