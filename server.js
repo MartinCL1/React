@@ -19,6 +19,11 @@ app.get('/', (req, res) => {
 app.use('/login', login );
 app.use('/principal', principal);
 
+
+app.get('/', (req, res) => {
+    res.send('Hola Mundo')
+})
 app.listen(PORT, ()=> {
     console.log('El server esta corriendo en el puerto: ', PORT)
 })
+
