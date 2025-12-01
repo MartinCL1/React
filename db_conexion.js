@@ -1,4 +1,5 @@
 const { createClient } = require('@supabase/supabase-js')
+require('dotenv').config()
 
 const URL_DATABASE = process.env.URL_DATABASE;
 const DATABASE_KEY = process.env.DATABASE_KEY;
@@ -36,14 +37,27 @@ const eliminarRegistros = async (ids) => {
     }
 }
 
-const agregarProducto = async(producto) => {
+const agregarProducto = async (producto) => {
     try {
         const { data } = await cliente.from('Producto').insert(producto).select()
-        if(!data) {
+        if (!data.length > 0) {
             return false
         }
         return data
-    }catch {
+    } catch {
+        return false
+    }
+}
+
+// Actualiza el producto con el id que se tiene.
+const editarProducto = async (producto) => {
+    try {
+        const { data } = await cliente.from('Producto').update(producto).eq('id', producto.id).select()
+        if (!data.length > 0) {
+            return false
+        }
+        return data
+    } catch {
         return false
     }
 }
@@ -52,5 +66,6 @@ module.exports = {
     buscarUsuario,
     obtenerProductos,
     eliminarRegistros,
-    agregarProducto
+    agregarProducto,
+    editarProducto
 }

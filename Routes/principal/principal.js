@@ -1,6 +1,6 @@
 const express = require('express')
 const { verificacionSesion } = require('../global')
-const {obtenerProductos, eliminarRegistros, agregarProducto} = require('../../db_conexion')
+const {obtenerProductos, eliminarRegistros, agregarProducto, editarProducto} = require('../../db_conexion')
 const principal = express.Router()
 
 principal.use(verificacionSesion);
@@ -25,6 +25,16 @@ principal.delete('/', verificacionSesion, async (request, response) => {
     response.status(200).json({ acceso: true, informacion: producto })
 })
 
+principal.put('/actualizarProducto', async(request, response) => {
+    const usuario = request.usuario;
+    if(!usuario) return response.status(403).json({acceso: false});
+
+    const producto = request.body
+    console.log(producto)
+    const valor = await editarProducto(producto);
+    if(!valor) return response.status(403).json({acceso: false});
+    response.status(200).json({acceso: true, informacion: valor})
+})
 
 principal.post('/agregarProducto', verificacionSesion, async (request, response) => {
     const usuario = request.usuario;

@@ -55,12 +55,12 @@ const refrescarToken = (request, response) => {
       .cookie("access_token", accessToken, {
         httpOnly: true,
         sameSite: "none",
-        secure: process.env === "production",
+        secure: true,
         maxAge: 3600000,
       })
       .cookie("refresh_token", refreshToken, {
         httpOnly: true,
-        secure: process.env === "production",
+        secure: true,
         sameSite: "none",
         maxAge: 1000 * 60 * 60 * 24 * 7,
       });
