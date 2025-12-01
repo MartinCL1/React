@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
@@ -17,7 +16,3 @@ app.use('/principal', principal);
 app.listen(PORT, ()=> {
     console.log('El server esta corriendo en el puerto: ', PORT)
 })
-
-=======
-import 
->>>>>>> parent of 1667dad (se creo la conexion a la base de datos)

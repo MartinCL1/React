@@ -28,7 +28,6 @@ principal.delete('/', verificacionSesion, async (request, response) => {
 principal.put('/actualizarProducto', async(request, response) => {
     const usuario = request.usuario;
     if(!usuario) return response.status(403).json({acceso: false});
-
     const producto = request.body
     const valor = await editarProducto(producto);
     if(!valor) return response.status(403).json({acceso: false});
