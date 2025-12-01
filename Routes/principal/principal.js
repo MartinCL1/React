@@ -30,7 +30,6 @@ principal.put('/actualizarProducto', async(request, response) => {
     if(!usuario) return response.status(403).json({acceso: false});
 
     const producto = request.body
-    console.log(producto)
     const valor = await editarProducto(producto);
     if(!valor) return response.status(403).json({acceso: false});
     response.status(200).json({acceso: true, informacion: valor})
