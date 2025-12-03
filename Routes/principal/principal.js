@@ -5,7 +5,6 @@ const principal = express.Router()
 
 principal.use(verificacionSesion);
 
-
 principal.delete('/', verificacionSesion, async (request, response) => {
     const usuario = request.usuario;
     if (!usuario) return response.status(403).json({ acceso: false });
