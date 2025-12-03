@@ -53,6 +53,8 @@ principal.post('/agregarProducto', verificacionSesion, async (request, response)
 })
 
 principal.get('/obtenerData/:pagina', async (request, response) => {
+    const usuario = request.usuario
+    if (!usuario) return response.status(401).json({ acceso: false })
     const pagina = request.params.pagina
     const idInicial = (pagina * 10) - 10
     const idFinal = (pagina * 10);
