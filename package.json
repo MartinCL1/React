@@ -11,11 +11,13 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@supabase/supabase-js": "^2.81.1",
     "bcrypt": "^6.0.0",
+<<<<<<< HEAD
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+=======
+>>>>>>> parent of 1667dad (se creo la conexion a la base de datos)
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2"
   }
