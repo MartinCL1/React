@@ -30,12 +30,11 @@ principal.put('/actualizarProducto', async (request, response) => {
     const expresionEnteros = /^[0-9]+$/
     const expresionPrecios = /^[0-9]+(\.[0-9]+)?$/
 
-
-    if (!producto.nombre.match(expresion) ||
-        !producto.existente.match(expresionEnteros) ||
-        !producto.actual.match(expresionEnteros) ||
-        !producto.vendido.match(expresionEnteros) ||
-        !producto.precio_unidad.match(expresionPrecios)
+    if (!expresion.test(producto.nombre) ||
+        !expresionEnteros.test(producto.existente) ||
+        !expresionEnteros.test(producto.actual)||
+        !expresionEnteros.test(producto.vendido) ||
+        !expresionPrecios.test(producto.precio_unidad)
     ) {
         return response.status(401).json({ acceso: false })
     }
