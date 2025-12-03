@@ -93,10 +93,28 @@ const crearTokens = (informacionUsuario) => {
   }
 };
 
+const verificadorDeTiposProducto = (producto) => {
+    const expresion = /^[A-Za-z]+$/
+    const expresionEnteros = /^[0-9]+$/
+    const expresionPrecios = /^[0-9]+(\.[0-9]+)?$/
+
+    if (!expresion.test(producto.nombre) ||
+        !expresionEnteros.test(producto.existente) ||
+        !expresionEnteros.test(producto.actual) ||
+        !expresionEnteros.test(producto.vendido) ||
+        !expresionPrecios.test(producto.precio_unidad)
+    ) {
+        return false
+    } else {
+        return true
+    }
+}
+
 
 
 module.exports = {
   validarHash,
   verificacionSesion,
   crearTokens,
+  verificadorDeTiposProducto
 };

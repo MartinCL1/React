@@ -13,10 +13,6 @@ app.use(express.json())
 app.use('/login', login );
 app.use('/principal', principal);
 
-app.get('/', (request, response) => {
-    response.send('Welcome.')
-})
-
 app.listen(PORT, ()=> {
     console.log('El server esta corriendo en el puerto: ', PORT)
 })

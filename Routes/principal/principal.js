@@ -1,13 +1,9 @@
 const express = require('express')
-const { verificacionSesion } = require('../global')
+const { verificacionSesion, verificadorDeTiposProducto } = require('../global')
 const { eliminarRegistros, agregarProducto, editarProducto, paginarDatos } = require('../../db_conexion')
 const principal = express.Router()
 
 principal.use(verificacionSesion);
-
-principal.get('/', (request, response) => {
-    response.send('holas')   
-}) 
 
 principal.delete('/', verificacionSesion, async (request, response) => {
     const usuario = request.usuario;
@@ -25,19 +21,10 @@ principal.put('/actualizarProducto', async (request, response) => {
     const usuario = request.usuario;
     if (!usuario) return response.status(403).json({ acceso: false });
     const producto = request.body
+    if(!producto) return response.status(401).json({acceso: false, informacion: false})
+    const formatoInformacionValida = verificadorDeTiposProducto(producto)
 
-    const expresion = /^[A-Za-z]+$/
-    const expresionEnteros = /^[0-9]+$/
-    const expresionPrecios = /^[0-9]+(\.[0-9]+)?$/
-
-    if (!expresion.test(producto.nombre) ||
-        !expresionEnteros.test(producto.existente) ||
-        !expresionEnteros.test(producto.actual)||
-        !expresionEnteros.test(producto.vendido) ||
-        !expresionPrecios.test(producto.precio_unidad)
-    ) {
-        return response.status(401).json({ acceso: false })
-    }
+    if(!formatoInformacionValida) return response.status(400).json({acceso: false, informacion: false});
 
     const valor = await editarProducto(producto);
     if (!valor) return response.status(403).json({ acceso: false });
@@ -48,10 +35,12 @@ principal.post('/agregarProducto', verificacionSesion, async (request, response)
     const usuario = request.usuario;
     if (!usuario) return response.status(403).json({ acceso: false });
 
-    const { id, nombre, precio_unidad, existente, actual, vendido } = request.body;
-    if (!id || !nombre || !precio_unidad || !existente || !actual || !vendido) return response.status(400).json({ acceso: false });
+    const productoNuevo = request.body;
+    
+    const formatoInformacionValida = verificadorDeTiposProducto(productoNuevo);
+    if(!formatoInformacionValida) return response.status(400).json({acceso: false, informacion: false});
 
-    const producto = await agregarProducto({ id, nombre, precio_unidad, existente, actual, vendido });
+    const producto = await agregarProducto(productoNuevo);
     if (!producto) return response.status(404).json({ acceso: false });
     response.status(200).json({ acceso: true, informacion: producto })
 })
@@ -66,6 +55,8 @@ principal.get('/obtenerData/:pagina', async (request, response) => {
     if (!informacion) return response.status(401).json({ acceso: false });
     response.status(200).json({ acceso: true, informacion: informacion })
 })
+
+
 
 module.exports = {
     principal
