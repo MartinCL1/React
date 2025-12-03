@@ -27,8 +27,20 @@ principal.delete('/', verificacionSesion, async (request, response) => {
 
 principal.put('/actualizarProducto', async(request, response) => {
     const usuario = request.usuario;
-    if(!usuario) return response.status(403).json({acceso: false});
+    if (!usuario) return response.status(403).json({ acceso: false });
     const producto = request.body
+    const expresion = /^[A-Za-z ]+$/
+    const expresionEnteros = /^[0-9]+$/
+    const expresionPrecios = /^[0-9]+(\.[0-9]+)?$/
+
+    if (!producto.nombre.match(expresion) ||
+        producto.existente.match(expresionEnteros) ||
+        producto.actual.match(expresionEnteros) ||
+        producto.vendido.match(expresionEnteros) ||
+        producto.precio_unidad.match(expresionPrecios)
+    ) {
+        return response.status(401).json({ acceso: false })
+    }
     const valor = await editarProducto(producto);
     if(!valor) return response.status(403).json({acceso: false});
     response.status(200).json({acceso: true, informacion: valor})
