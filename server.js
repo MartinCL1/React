@@ -16,4 +16,3 @@ app.use('/principal', principal);
 app.listen(PORT, ()=> {
     console.log('El server esta corriendo en el puerto: ', PORT)
 })
-
