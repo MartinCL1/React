@@ -29,12 +29,13 @@ principal.put('/actualizarProducto', async (request, response) => {
     const expresion = /^[A-Za-z]+$/
     const expresionEnteros = /^[0-9]+$/
     const expresionPrecios = /^[0-9]+(\.[0-9]+)?$/
-    // 
+
+
     if (!producto.nombre.match(expresion) ||
-        !producto.existente.match(expresionEnteros) ||
-        !producto.actual.match(expresionEnteros) ||
-        !producto.vendido.match(expresionEnteros) ||
-        !producto.precio_unidad.match(expresionPrecios)
+        !Number(producto.existente.match(expresionEnteros)) ||
+        !Number(producto.actual.match(expresionEnteros)) ||
+        !Number(producto.vendido.match(expresionEnteros)) ||
+        !parseFloat(producto.precio_unidad.match(expresionPrecios))
     ) {
         return response.status(401).json({ acceso: false })
     }
