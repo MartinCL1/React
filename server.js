@@ -1,7 +1,7 @@
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
-const login = require('./Routes/autenticacion/login')
+const { login } = require('./Routes/autenticacion/login')
 const { principal } = require('./Routes/principal/principal')
 const app = express()
 const PORT = 3500 || process.env.PORT
