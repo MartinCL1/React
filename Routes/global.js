@@ -94,7 +94,7 @@ const crearTokens = (informacionUsuario) => {
 };
 
 const verificadorDeTiposProducto = (producto) => {
-    const expresion = /^[A-Za-z]+$/
+    const expresion = /^[A-Za-z\s]+$/
     const expresionEnteros = /^[0-9]+$/
     const expresionPrecios = /^[0-9]+(\.[0-9]+)?$/
 
