@@ -5,14 +5,6 @@ const principal = express.Router()
 
 principal.use(verificacionSesion);
 
-principal.get('/', verificacionSesion, async (request, response) => {
-    const usuario = request.usuario;
-    if (!usuario) return response.status(403).json({ acceso: false });
-
-    const productos = await obtenerProductos();  
-    return response.status(200).json({ acceso: true, informacion: productos })
-})
-
 principal.delete('/', verificacionSesion, async (request, response) => {
     const usuario = request.usuario;
     if (!usuario) return response.status(403).json({ acceso: false });  
