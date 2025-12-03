@@ -32,10 +32,10 @@ principal.put('/actualizarProducto', async (request, response) => {
 
 
     if (!producto.nombre.match(expresion) ||
-        !Number(producto.existente.match(expresionEnteros)) ||
-        !Number(producto.actual.match(expresionEnteros)) ||
-        !Number(producto.vendido.match(expresionEnteros)) ||
-        !parseFloat(producto.precio_unidad.match(expresionPrecios))
+        !producto.existente.match(expresionEnteros) ||
+        !producto.actual.match(expresionEnteros) ||
+        !producto.vendido.match(expresionEnteros) ||
+        !producto.precio_unidad.match(expresionPrecios)
     ) {
         return response.status(401).json({ acceso: false })
     }
