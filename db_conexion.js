@@ -16,17 +16,6 @@ const buscarUsuario = async (usuario) => {
     }
 }
 
-// Obtiene todos los productos.
-const obtenerProductos = async () => {
-    try {
-        const { data } = await cliente.from('Producto').select('*')
-        if (data.length > 0) return data
-        return false
-    } catch {
-        return false
-    }
-}
-
 const eliminarRegistros = async (ids) => {
     try {
         const { data } = await cliente.from('Producto').delete().in('id', ids).select()
@@ -62,10 +51,23 @@ const editarProducto = async (producto) => {
     }
 }
 
+const paginarDatos = async (idInicial, idFinal) => {
+    try {
+        const { data } = await cliente.from('Producto').select('*').range(idInicial, idFinal - 1).order('created_at', {ascending: true})
+        if (!data.length > 0) {
+            return false
+        }
+        return data
+    } catch (error) {
+        return false
+    }
+
+}
+
 module.exports = {
     buscarUsuario,
-    obtenerProductos,
     eliminarRegistros,
     agregarProducto,
-    editarProducto
+    editarProducto,
+    paginarDatos
 }

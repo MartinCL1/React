@@ -5,7 +5,7 @@ const login = express.Router();
 
 login.post("/", async (request, response) => {
   const { nombreUsuario, contrasena } = request.body;
-  const [usuarioEncontrado] = await buscarUsuario(nombreUsuario);
+  const [usuarioEncontrado] = await buscarUsuario(nombreUsuario.toLowerCase());
    
   if (!usuarioEncontrado) return response.status(403).json({ acceso: false });
   const esHashValido = await validarHash(
